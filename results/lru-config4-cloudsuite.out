@@ -1,0 +1,100 @@
+
+*** ChampSim Multicore Out-of-Order Simulator ***
+
+Warmup Instructions: 100000
+Simulation Instructions: 1000000
+Configuration: 4
+Number of CPUs: 4
+LLC sets: 8192
+LLC ways: 16
+Off-chip DRAM Channels: 2 Width: 64-bit Data Rate: 1600 MT/s
+
+CPU 0 runs ../ChampSim_CRC2/trace/cassandra_core_0.trace.gz
+CPU 1 runs ../ChampSim_CRC2/trace/cassandra_core_1.trace.gz
+CPU 2 runs ../ChampSim_CRC2/trace/cassandra_core_2.trace.gz
+CPU 3 runs ../ChampSim_CRC2/trace/cassandra_core_3.trace.gz
+CPU 0 L1D next line prefetcher
+CPU 0 L2C IP-based stride prefetcher
+CPU 1 L1D next line prefetcher
+CPU 1 L2C IP-based stride prefetcher
+CPU 2 L1D next line prefetcher
+CPU 2 L2C IP-based stride prefetcher
+CPU 3 L1D next line prefetcher
+CPU 3 L2C IP-based stride prefetcher
+Initialize LRU replacement state
+
+Warmup complete CPU 0 instructions: 100002 cycles: 42644 (Simulation time: 0 hr 0 min 1 sec) 
+Warmup complete CPU 1 instructions: 152184 cycles: 42643 (Simulation time: 0 hr 0 min 1 sec) 
+Warmup complete CPU 2 instructions: 132314 cycles: 42643 (Simulation time: 0 hr 0 min 1 sec) 
+Warmup complete CPU 3 instructions: 145420 cycles: 42643 (Simulation time: 0 hr 0 min 1 sec) 
+
+Heartbeat CPU 3 instructions: 1000002 cycles: 2222912 heartbeat IPC: 0.449861 cumulative IPC: 0.391962 (Simulation time: 0 hr 0 min 6 sec) 
+Finished CPU 3 instructions: 1000002 cycles: 2585549 cummulative IPC: 0.386766 (Simulation time: 0 hr 0 min 7 sec) 
+Heartbeat CPU 2 instructions: 1000003 cycles: 3164534 heartbeat IPC: 0.316003 cumulative IPC: 0.277937 (Simulation time: 0 hr 0 min 9 sec) 
+Finished CPU 2 instructions: 1000002 cycles: 3536111 cummulative IPC: 0.282797 (Simulation time: 0 hr 0 min 10 sec) 
+Heartbeat CPU 0 instructions: 1000000 cycles: 3590112 heartbeat IPC: 0.278543 cumulative IPC: 0.253702 (Simulation time: 0 hr 0 min 10 sec) 
+Finished CPU 0 instructions: 1000000 cycles: 3851276 cummulative IPC: 0.259654 (Simulation time: 0 hr 0 min 11 sec) 
+Heartbeat CPU 1 instructions: 1000001 cycles: 3922087 heartbeat IPC: 0.254967 cumulative IPC: 0.218541 (Simulation time: 0 hr 0 min 11 sec) 
+Finished CPU 1 instructions: 1000002 cycles: 4920097 cummulative IPC: 0.203248 (Simulation time: 0 hr 0 min 14 sec) 
+
+ChampSim completed all CPUs
+
+Total Simulation Statistics
+
+CPU 0 cummulative IPC: 0.308916 instructions: 1519898 cycles: 4920096
+LLC TOTAL     ACCESS:      26227  HIT:       8895  MISS:      17332
+LLC LOAD      ACCESS:      12057  HIT:       4432  MISS:       7625
+LLC RFO       ACCESS:        656  HIT:        158  MISS:        498
+LLC PREFETCH  ACCESS:      10354  HIT:       1145  MISS:       9209
+LLC WRITEBACK ACCESS:       3160  HIT:       3160  MISS:          0
+
+CPU 1 cummulative IPC: 0.203248 instructions: 1000002 cycles: 4920097
+LLC TOTAL     ACCESS:      36387  HIT:      13929  MISS:      22458
+LLC LOAD      ACCESS:      16150  HIT:       5454  MISS:      10696
+LLC RFO       ACCESS:       3380  HIT:        337  MISS:       3043
+LLC PREFETCH  ACCESS:      10443  HIT:       1725  MISS:       8718
+LLC WRITEBACK ACCESS:       6414  HIT:       6413  MISS:          1
+
+CPU 2 cummulative IPC: 0.331192 instructions: 1629498 cycles: 4920097
+LLC TOTAL     ACCESS:      24323  HIT:       4771  MISS:      19552
+LLC LOAD      ACCESS:      10603  HIT:       1644  MISS:       8959
+LLC RFO       ACCESS:        316  HIT:         94  MISS:        222
+LLC PREFETCH  ACCESS:      11032  HIT:        661  MISS:      10371
+LLC WRITEBACK ACCESS:       2372  HIT:       2372  MISS:          0
+
+CPU 3 cummulative IPC: 0.37256 instructions: 1833029 cycles: 4920097
+LLC TOTAL     ACCESS:      26894  HIT:       4867  MISS:      22027
+LLC LOAD      ACCESS:       8801  HIT:        489  MISS:       8312
+LLC RFO       ACCESS:       2184  HIT:         43  MISS:       2141
+LLC PREFETCH  ACCESS:      11996  HIT:        422  MISS:      11574
+LLC WRITEBACK ACCESS:       3913  HIT:       3913  MISS:          0
+
+Region of Interest Statistics
+
+CPU 0 cummulative IPC: 0.259654 instructions: 1000000 cycles: 3851276
+LLC TOTAL     ACCESS:      19869  HIT:       7552  MISS:      12317
+LLC LOAD      ACCESS:      10035  HIT:       3946  MISS:       6089
+LLC RFO       ACCESS:        580  HIT:        121  MISS:        459
+LLC PREFETCH  ACCESS:       6711  HIT:        942  MISS:       5769
+LLC WRITEBACK ACCESS:       2543  HIT:       2543  MISS:          0
+
+CPU 1 cummulative IPC: 0.203248 instructions: 1000002 cycles: 4920097
+LLC TOTAL     ACCESS:      36387  HIT:      13929  MISS:      22458
+LLC LOAD      ACCESS:      16150  HIT:       5454  MISS:      10696
+LLC RFO       ACCESS:       3380  HIT:        337  MISS:       3043
+LLC PREFETCH  ACCESS:      10443  HIT:       1725  MISS:       8718
+LLC WRITEBACK ACCESS:       6414  HIT:       6413  MISS:          1
+
+CPU 2 cummulative IPC: 0.282797 instructions: 1000002 cycles: 3536111
+LLC TOTAL     ACCESS:      16637  HIT:       2933  MISS:      13704
+LLC LOAD      ACCESS:       8011  HIT:        931  MISS:       7080
+LLC RFO       ACCESS:        230  HIT:         54  MISS:        176
+LLC PREFETCH  ACCESS:       6781  HIT:        333  MISS:       6448
+LLC WRITEBACK ACCESS:       1615  HIT:       1615  MISS:          0
+
+CPU 3 cummulative IPC: 0.386766 instructions: 1000002 cycles: 2585549
+LLC TOTAL     ACCESS:      17705  HIT:       3238  MISS:      14467
+LLC LOAD      ACCESS:       5046  HIT:        197  MISS:       4849
+LLC RFO       ACCESS:       2144  HIT:         15  MISS:       2129
+LLC PREFETCH  ACCESS:       7630  HIT:        141  MISS:       7489
+LLC WRITEBACK ACCESS:       2885  HIT:       2885  MISS:          0
