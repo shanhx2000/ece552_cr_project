@@ -67,11 +67,11 @@ void InitReplacementState()
     random_device rd;
     mt19937 gen(rd());
     shuffle(idx.begin(), idx.end(), gen);
-    // for ( int i = 0 ; i < SAMPLE_NUM ; ++ i )
-        // is_ship_sample[idx[i]-1] = true;
-    
-    for ( int i = 0 ; i < LLC_SETS ; ++ i )
-        is_ship_sample[i] = true;
+    // TODO
+    for ( int i = 0 ; i < SAMPLE_NUM ; ++ i )
+        is_ship_sample[idx[i]-1] = true;
+    // for ( int i = 0 ; i < LLC_SETS ; ++ i ) // For testing
+    //     is_ship_sample[i] = true;
 }
 
 // find replacement victim
@@ -85,7 +85,6 @@ uint32_t GetVictimInSet (uint32_t cpu, uint32_t set, const BLOCK *current_set, u
         for (int i=0; i<LLC_WAYS; i++)
             if (line_rrpv[set][i] == maxRRPV)
                 return i;
-
         for (int i=0; i<LLC_WAYS; i++)
             line_rrpv[set][i]++;
     }
@@ -105,6 +104,13 @@ uint32_t generate_signature(uint64_t PC, uint32_t type)
 // called on every cache hit and cache fill
 void UpdateReplacementState (uint32_t cpu, uint32_t set, uint32_t way, uint64_t paddr, uint64_t PC, uint64_t victim_addr, uint32_t type, uint8_t hit)
 {
+    // handle writeback access
+    if (type == WRITEBACK) {
+        if (!hit)
+            line_rrpv[set][way] = maxRRPV - 1;
+        return;
+    }
+
     uint32_t sig = line_sign[set][way];
     if (hit) { // A cache hit
         line_rrpv[set][way] = 0;
@@ -117,12 +123,12 @@ void UpdateReplacementState (uint32_t cpu, uint32_t set, uint32_t way, uint64_t 
     }
 
     // A cache fill
-    uint32_t core = core_belonging[set][way];
-    uint32_t new_signature = generate_signature(PC, type);
     if (is_ship_sample[set]) {
+        uint32_t core = core_belonging[set][way];
         if(line_outc[set][way] != true)
             SHCT[core][line_sign[set][way]] = SHCT_DEC(SHCT[core][line_sign[set][way]]);
     }
+    uint32_t new_signature = generate_signature(PC, type);
     core_belonging[set][way] = cpu;
     line_outc[set][way] = false;
     line_sign[set][way] = new_signature;    
@@ -151,22 +157,22 @@ void PrintStats()
     // using namespace std;
     // cout << x << endl;
 
-    for (int i = 0 ; i < LLC_SETS/4 ; ++ i)
-        if (is_ship_sample[i])
-            for (int j=0;j<16/4;++j)
-            {
-                if(line_sign[i][j] == 0)
-                    continue;
-                cout << i << " " << j << line_sign[i][j] << " " << line_rrpv[i][j] << " " << core_belonging[i][j] << "\n";
-            }
+    // for (int i = 0 ; i < LLC_SETS/4 ; ++ i)
+    //     if (is_ship_sample[i])
+    //         for (int j=0;j<16/4;++j)
+    //         {
+    //             if(line_sign[i][j] == 0)
+    //                 continue;
+    //             cout << i << " " << j << line_sign[i][j] << " " << line_rrpv[i][j] << " " << core_belonging[i][j] << "\n";
+    //         }
 
-    int y[maxSHCTv] = {0};
-    for (int i = 1 ; i < SHCT_SIZE ; i++)
-        if(SHCT[0][i] != 1)
-            y[SHCT[0][i]]++;
-    for (int i=0;i<maxSHCTv;++i)
-        cout << y[i] <<" ";
-    cout << endl;
+    // int y[maxSHCTv] = {0};
+    // for (int i = 1 ; i < SHCT_SIZE ; i++)
+    //     if(SHCT[0][i] != 1)
+    //         y[SHCT[0][i]]++;
+    // for (int i=0;i<maxSHCTv;++i)
+    //     cout << y[i] <<" ";
+    // cout << endl;
 
 
 }

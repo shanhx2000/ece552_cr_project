@@ -1,8 +1,8 @@
 #!/bin/bash
 pj_dir="../ece552_cr_project"
 CRC2_dir="../ChampSim_CRC2"
-exec_dir=$pj_dir/exec
-result_dir=$pj_dir/results
+exec_dir=$pj_dir/"exec"
+result_dir=$pj_dir/"results"/"2e8Tr1e9Te"
 
 # Verify Directory
 if [ ! -d $pj_dir ]
@@ -40,11 +40,26 @@ fi
 # $ g++ -Wall --std=c++11 -o lru-config4 example/lru-8MB.cc lib/config4.a
 # $ ./lru-config4 -warmup_instructions 1000000 -simulation_instructions 10000000 -cloudsuite -traces trace/cassandra_core_0.trace.gz trace/cassandra_core_1.trace.gz trace/cassandra_core_2.trace.gz trace/cassandra_core_3.trace.gz
 
-exec_files=$(ls $pj_dir/exec/)
+# exec_files=$(ls $pj_dir/exec/)
+# exec_files=(lru-config1 ship-config1 ship++-config1 srrip-config1)
+exec_files=(ship-config1)
 
 # TODO: Change it back for the final test.
-warmup_insn_num=1000000 # final test: 1000000
-simula_insn_num=10000000 # final test: 10000000
+warmup_insn_num=200000000 # final test: 1000000
+simula_insn_num=1000000000 # final test: 10000000
+
+# SPEC CPU 2006 (Single-core)
+# 200M warmup and 1B detailed execution
+# Measure the geometric mean IPC speedup over the baseline LRU policy
+
+# SPEC CPU 2006 (Multi-core)
+# Run at least 1B instructions for all cores
+# Measure the weighted IPC speedup over the baseline LRU policy
+
+# CloudSuite (Multi-core)
+# Run at least 1B instructions for all cores
+#  Measure the IPC speedup over the LRU (based on the slowest trace)
+#  Measure the average speedup across 6 different samples
 
 for exec in ${exec_files[@]};
 do

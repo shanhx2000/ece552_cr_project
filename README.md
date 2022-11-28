@@ -29,4 +29,5 @@ pwd
 ## How to change scripts
 
 1. Add you source files in `compile.sh`
-2. Change number of instructions to simulate in `run_sim.sh` when final testing. 
+2. *IMPORTANT:* Change number of instructions to simulate in `run_sim.sh` when final testing. Please also change the directory of results correspondingly. 
+
