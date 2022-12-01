@@ -31,3 +31,9 @@ pwd
 1. Add you source files in `compile.sh`
 2. *IMPORTANT:* Change number of instructions to simulate in `run_sim.sh` when final testing. Please also change the directory of results correspondingly. 
 
+## How to run micro-benchmark
+
+1. Change your source file config to follow that in microbenchmark.cc. 
+2. Revise commands in ./scripts/run_microbenchmark.sh. 
+3. Run ./scripts/run_microbenchmark.sh 
+4. Run ./MicroBenchmarks_exec/ship 

@@ -9,10 +9,15 @@
 #include<iterator>
 #include<random>
 #include <numeric>
+#include "../MicroBenchmarks/MicroBenchmark.h"
+
+// #define NUM_CORE 1
+// #define LLC_SETS NUM_CORE*2048
+// #define LLC_WAYS 16
 
 #define NUM_CORE 1
-#define LLC_SETS NUM_CORE*2048
-#define LLC_WAYS 16
+#define LLC_SETS NUM_CORE*4
+#define LLC_WAYS 2
 
 #define maxRRPV 3
 uint32_t line_rrpv[LLC_SETS][LLC_WAYS]; // Line rrpv index
@@ -67,8 +72,13 @@ void InitReplacementState()
     random_device rd;
     mt19937 gen(rd());
     shuffle(idx.begin(), idx.end(), gen);
+    cout << "Picked Samples:" << endl;
+    for (auto x : idx)
+        cout << x << " ";
+    cout << endl;
     // TODO
-    for ( int i = 0 ; i < SAMPLE_NUM ; ++ i )
+    int max_sample = (LLC_SETS < SAMPLE_NUM) ? LLC_SETS : SAMPLE_NUM;
+    for ( int i = 0 ; i < max_sample ; ++ i )
         is_ship_sample[idx[i]-1] = true;
     // for ( int i = 0 ; i < LLC_SETS ; ++ i ) // For testing
     //     is_ship_sample[i] = true;
@@ -98,7 +108,7 @@ uint32_t generate_signature(uint64_t PC, uint32_t type)
 {
     uint64_t use_PC = (type == PREFETCH ) ? ((PC << 1) + 1) : (PC<<1);
     uint32_t new_sig = use_PC%SHCT_SIZE;
-    return new_sig;
+    return new_sig + 1;
 }
 
 // called on every cache hit and cache fill
@@ -147,24 +157,28 @@ void PrintStats_Heartbeat()
 // use this function to print out your own stats at the end of simulation
 void PrintStats()
 {
-    // // Nothing needed.
+    using namespace std;
+
+    // Nothing needed.
     // int x = 0;
+    // cout << "#Sampled sets:";
     // for (int i = 0 ; i < LLC_SETS; i++ )
     // {
     //     if (is_ship_sample[i])
     //         x++;
-    // }
-    // using namespace std;
-    // cout << x << endl;
-
-    // for (int i = 0 ; i < LLC_SETS/4 ; ++ i)
     //     if (is_ship_sample[i])
-    //         for (int j=0;j<16/4;++j)
-    //         {
-    //             if(line_sign[i][j] == 0)
-    //                 continue;
-    //             cout << i << " " << j << line_sign[i][j] << " " << line_rrpv[i][j] << " " << core_belonging[i][j] << "\n";
-    //         }
+    //         cout << i << " ";
+    // }
+    
+    // cout << " total=" << x << endl;
+
+    for (int i = 0 ; i < LLC_SETS; ++ i)
+        for (int j=0;j<LLC_WAYS;++j)
+        {
+            if(line_sign[i][j] == 0)
+                continue;
+            cout << "[" << i << "][" << j << "] sig=" << line_sign[i][j] << " rrpv=" << line_rrpv[i][j] << " core=" << core_belonging[i][j] << "\n";
+        }
 
     // int y[maxSHCTv] = {0};
     // for (int i = 1 ; i < SHCT_SIZE ; i++)
