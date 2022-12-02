@@ -1,0 +1,157 @@
+#include "../inc/champsim_crc2.h"
+#include "sdbp.h"
+#include "utils.h"
+
+#define NUM_CORE 1
+#define LLC_SETS NUM_CORE*2048
+#define LLC_WAYS 16
+
+//definitions to Sampling Predictor
+#define SAMPLER_SETS 32
+#define SAMPLER_ASSOC 12
+#define SAMPLER_MODULUS LLC_SETS/SAMPLER_SETS
+
+
+#define PREDICTOR_NUM_TABLES 3
+#define PREDICTOR_TABLE_ENTRIS 4096
+#define PREDICTOR_INDEX_BITS 12 //log2(4096) = 12
+#define PREDICTOR_COUNTER_WIDTH 2
+#define PREDICTOR_THRESHOLD 8
+
+#define TRACE_BITS 16
+#define TAG_BITS 16
+
+
+uint32_t lru[LLC_SETS][LLC_WAYS]; //LRU gives the baseline replacement policies for SDBP
+bool prediction[LLC_SETS][LLC_WAYS];
+sampler *samp;
+int predictor_tables[PREDICTOR_NUM_TABLES][PREDICTOR_TABLE_ENTRIS];
+
+// initialize replacement state
+void InitReplacementState()
+{
+    //init LRU
+    cout << "Initialize LRU replacement state" << endl;
+    for (int i=0; i<LLC_SETS; i++) {
+        for (int j=0; j<LLC_WAYS; j++) {
+            lru[i][j] = j;
+        }
+    }
+
+    //init SDBP Sampling Predictor
+    samp = new sampler();
+
+    //init predictor tables value as 0
+    memset(predictor_tables,0,sizeof(predictor_tables));
+    memset(prediction,false,sizeof(prediction));
+}
+
+
+// find replacement victim
+// return value should be 0 ~ 15 or 16 (bypass)
+uint32_t GetVictimInSet (uint32_t cpu, uint32_t set, const BLOCK *current_set, uint64_t PC, uint64_t paddr, uint32_t type)
+{
+    uint32_t r=Get_LRU_Victim(set); // start from LRU replacement victim
+
+    //seek for predicted dead block, if found, replace the LRU solutions
+    for(unsigned int i =0; i < LLC_WAYS; i++)
+        if(prediction[set][i]){
+            r = i; 
+            break;
+        }
+
+    //bypass blocks that is dead on arrival 
+    //to be added here
+
+    return r;
+}
+
+uint32_t GetLRUVictim(uint32_t set){
+    for (int i=0; i<LLC_WAYS; i++)
+            if (lru[set][i] == (LLC_WAYS-1))
+                return i;
+    return 0;
+}
+
+// called on every cache hit and cache fill
+void UpdateReplacementState (uint32_t cpu, uint32_t set, uint32_t way, uint64_t paddr, uint64_t PC, uint64_t victim_addr, uint32_t type, uint8_t hit)
+{
+    UpdateLRUState(set,way);
+
+    //check if it is the sampler set
+    if(set % SAMPLER_MODULUS ==0){
+        //compute the actual sampler set index, access the sampler
+        int samp_index = set / SAMPLER_MODULUS;
+        if (samp_index >=0 && samp_index < SAMPLER_SETS)
+            samp->update_sampler(cpu,set,paddr,PC);
+    }
+
+
+    //update the prediction result for this trace for the next round
+    prediction[set][way] = samp->pred->get_prediction(cpu,get_trace(PC),set);
+}
+
+void UpdateLRUState(uint32_t set, uint32_t way)//function to update LRU
+{
+    // update lru replacement state
+    for (uint32_t i=0; i<LLC_WAYS; i++) {
+        if (lru[set][i] < lru[set][way]) {
+            lru[set][i]++;
+
+            if (lru[set][i] == LLC_WAYS)
+                assert(0);
+        }
+    }
+    lru[set][way] = 0; // promote to the MRU position
+}
+
+// use this function to print out your own stats on every heartbeat 
+void PrintStats_Heartbeat()
+{
+
+}
+
+// use this function to print out your own stats at the end of simulation
+void PrintStats()
+{
+
+}
+
+//helper functions to sdbp
+
+//extract the lower 16 bits out of PC as hashing number
+uint32_t get_trace(uint64_t PC){
+    return PC & ((1<<TRACE_BITS)-1);
+}
+
+//get index number of the predictor table using CPU, trace and table_num
+uint32_t predictor::get_signature(uint32_t CPU, uint32_t trace, int table_num){
+    uint32_t x = fi (trace ^ (CPU << 2), table_num);
+	return x & ((1<<PREDICTOR_INDEX_BITS)-1); // get the lower 12 bit index bits
+}
+
+//update the counter value, increment if dead, decrease the counter if not
+void predictor::block_dead(uint32_t CPU, uint32_t trace, bool ifdead){
+    return;
+}
+
+//predict if a given block is considered dead
+bool predictor::get_prediction(uint32_t CPU,uint32_t trace, uint32_t set){
+    return true;
+}
+
+//initialize sampler and its substruct
+sampler::sampler(void){
+    pred = new predictor ();
+    sets = new sampler_set [SAMPLER_SETS];
+}
+
+sampler_set::sampler_set(void){
+    entries = new sampler_entry[SAMPLER_ASSOC];
+}
+
+//update sampler
+void sampler::update_sampler(uint32_t CPU, uint32_t set,uint64_t tag, uint64_t PC){
+    
+    sampler_entry *entries = &sets[set].entries[0];
+}
