@@ -2,19 +2,19 @@
 #include "sdbp.h"
 #include "utils.h"
 
-#define NUM_CORE 1
+#define NUM_CORE 4
 #define LLC_SETS NUM_CORE*2048
 #define LLC_WAYS 16
 
 //definitions to Sampling Predictor
-#define SAMPLER_SETS 32
-#define SAMPLER_ASSOC 12
+#define SAMPLER_SETS 32*4
+#define SAMPLER_ASSOC 13
 #define SAMPLER_MODULUS LLC_SETS/SAMPLER_SETS
 
 
 #define PREDICTOR_NUM_TABLES 3
-#define PREDICTOR_TABLE_ENTRIES 4096
-#define PREDICTOR_INDEX_BITS 12 //log2(4096) = 12
+#define PREDICTOR_TABLE_ENTRIES 4096*4
+#define PREDICTOR_INDEX_BITS 14 //log2(4096) = 12
 #define PREDICTOR_COUNTER_WIDTH 2
 #define PREDICTOR_COUNTER_MAX 4
 #define PREDICTOR_THRESHOLD 8
@@ -69,7 +69,9 @@ uint32_t GetVictimInSet (uint32_t cpu, uint32_t set, const BLOCK *current_set, u
         }
 
     //bypass blocks that is dead on arrival 
-    //to be added here
+    //dont see the gain, commented out
+    // int predict = samp->pred->get_prediction(cpu,get_trace(PC));
+    // if(predict) r = -1;
 
     return r;
 }
@@ -94,6 +96,8 @@ void UpdateReplacementState (uint32_t cpu, uint32_t set, uint32_t way, uint64_t 
 {
     UpdateLRUState(set,way);
 
+    if(type == WRITEBACK) // improves the performance greatly.. dont know why
+        return;
     //check if it is the sampler set
     if(set % SAMPLER_MODULUS ==0){
         //compute the actual sampler set index, access the sampler
@@ -155,11 +159,11 @@ void predictor::block_dead(uint32_t CPU, uint32_t trace, bool ifdead){
 //predict if a given block is considered dead
 bool predictor::get_prediction(uint32_t CPU,uint32_t trace){
     
-    // int sum = 0;
+    int sum = 0;
 
-    // for(int i=0;i<PREDICTOR_NUM_TABLES;i++)
-    //     sum += predictor_tables[i][get_signature(CPU,trace,i)];
-    // return sum>=PREDICTOR_THRESHOLD;
+    for(int i=0;i<PREDICTOR_NUM_TABLES;i++)
+        sum += predictor_tables[i][get_signature(CPU,trace,i)];
+    return sum>=PREDICTOR_THRESHOLD;
 
     return false;
     
@@ -183,7 +187,7 @@ sampler_set::sampler_set(void){
 void sampler::update_sampler(uint32_t CPU, uint32_t set,uint64_t tag, uint64_t PC){
     
     sampler_entry *entries = &sets[set].entries[0]; // identify the target sampler set
-    uint32_t partial_tag = tag & ((1<<TAG_BITS)-1); //extract the lower 16-bit of the address 
+    uint32_t partial_tag = tag & (((1<<TAG_BITS)-1)<<4); //extract the lower 16-bit of the address 
 
     int i; 
     for(i=0;i<SAMPLER_ASSOC;i++)
