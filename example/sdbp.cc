@@ -1,4 +1,4 @@
-#include "../inc/champsim_crc2.h"
+#include "../../ChampSim_CRC2/inc/champsim_crc2.h"
 #include "sdbp.h"
 #include "utils.h"
 
@@ -48,6 +48,13 @@ void InitReplacementState()
 }
 
 
+uint32_t Get_LRU_Victim(uint32_t set){
+    for (int i=0; i<LLC_WAYS; i++)
+            if (lru[set][i] == (LLC_WAYS-1))
+                return i;
+    return 0;
+}
+
 // find replacement victim
 // return value should be 0 ~ 15 or 16 (bypass)
 uint32_t GetVictimInSet (uint32_t cpu, uint32_t set, const BLOCK *current_set, uint64_t PC, uint64_t paddr, uint32_t type)
@@ -67,11 +74,19 @@ uint32_t GetVictimInSet (uint32_t cpu, uint32_t set, const BLOCK *current_set, u
     return r;
 }
 
-uint32_t GetLRUVictim(uint32_t set){
-    for (int i=0; i<LLC_WAYS; i++)
-            if (lru[set][i] == (LLC_WAYS-1))
-                return i;
-    return 0;
+
+void UpdateLRUState(uint32_t set, uint32_t way)//function to update LRU
+{
+    // update lru replacement state
+    for (uint32_t i=0; i<LLC_WAYS; i++) {
+        if (lru[set][i] < lru[set][way]) {
+            lru[set][i]++;
+
+            if (lru[set][i] == LLC_WAYS)
+                assert(0);
+        }
+    }
+    lru[set][way] = 0; // promote to the MRU position
 }
 
 // called on every cache hit and cache fill
@@ -90,20 +105,6 @@ void UpdateReplacementState (uint32_t cpu, uint32_t set, uint32_t way, uint64_t 
 
     //update the prediction result for this trace for the next round
     prediction[set][way] = samp->pred->get_prediction(cpu,get_trace(PC));
-}
-
-void UpdateLRUState(uint32_t set, uint32_t way)//function to update LRU
-{
-    // update lru replacement state
-    for (uint32_t i=0; i<LLC_WAYS; i++) {
-        if (lru[set][i] < lru[set][way]) {
-            lru[set][i]++;
-
-            if (lru[set][i] == LLC_WAYS)
-                assert(0);
-        }
-    }
-    lru[set][way] = 0; // promote to the MRU position
 }
 
 // use this function to print out your own stats on every heartbeat 
@@ -154,11 +155,13 @@ void predictor::block_dead(uint32_t CPU, uint32_t trace, bool ifdead){
 //predict if a given block is considered dead
 bool predictor::get_prediction(uint32_t CPU,uint32_t trace){
     
-    int sum = 0;
+    // int sum = 0;
 
-    for(int i=0;i<PREDICTOR_NUM_TABLES;i++)
-        sum += predictor_tables[i][get_signature(CPU,trace,i)];
-    return sum>=PREDICTOR_THRESHOLD;
+    // for(int i=0;i<PREDICTOR_NUM_TABLES;i++)
+    //     sum += predictor_tables[i][get_signature(CPU,trace,i)];
+    // return sum>=PREDICTOR_THRESHOLD;
+
+    return false;
     
 }
 

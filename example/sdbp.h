@@ -3,18 +3,7 @@
 
 uint32_t get_trace(uint64_t PC);
 
-struct sampler{
-    predictor *pred;
-    sampler_set *sets;
-
-    void update_sampler(uint32_t CPU, uint32_t set,uint64_t tag, uint64_t PC);
-    sampler::sampler(void); // constructor for sampler
-};
-
-struct sampler_set {
-    sampler_entry *entries;
-    sampler_set(void); // constructor for sampler set
-};
+struct sampler;
 
 struct sampler_entry{
 	unsigned int 	
@@ -37,8 +26,21 @@ struct sampler_entry{
 	};
 };
 
+struct sampler_set {
+    sampler_entry *entries;
+    sampler_set(void); // constructor for sampler set
+};
+
 struct predictor{
-    bool predictor::get_prediction(uint32_t CPU,uint32_t trace);
-    void predictor::block_dead(uint32_t CPU, uint32_t trace, bool ifdead);
-    uint32_t predictor::get_signature(uint32_t CPU, uint32_t trace, int table_num);
+    bool get_prediction(uint32_t CPU,uint32_t trace);
+    void block_dead(uint32_t CPU, uint32_t trace, bool ifdead);
+    uint32_t get_signature(uint32_t CPU, uint32_t trace, int table_num);
+};
+
+struct sampler{
+    predictor *pred;
+    sampler_set *sets;
+
+    void update_sampler(uint32_t CPU, uint32_t set,uint64_t tag, uint64_t PC);
+    sampler(void); // constructor for sampler
 };
