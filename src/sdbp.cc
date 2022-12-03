@@ -2,19 +2,19 @@
 #include "sdbp.h"
 #include "utils.h"
 
-#define NUM_CORE 4
+#define NUM_CORE 1
 #define LLC_SETS NUM_CORE*2048
 #define LLC_WAYS 16
 
 //definitions to Sampling Predictor
-#define SAMPLER_SETS 32*4
-#define SAMPLER_ASSOC 13
+#define SAMPLER_SETS 32
+#define SAMPLER_ASSOC 12
 #define SAMPLER_MODULUS LLC_SETS/SAMPLER_SETS
 
 
 #define PREDICTOR_NUM_TABLES 3
-#define PREDICTOR_TABLE_ENTRIES 4096*4
-#define PREDICTOR_INDEX_BITS 14 //log2(4096) = 12
+#define PREDICTOR_TABLE_ENTRIES 4096
+#define PREDICTOR_INDEX_BITS 12 //log2(4096) = 12
 #define PREDICTOR_COUNTER_WIDTH 2
 #define PREDICTOR_COUNTER_MAX 4
 #define PREDICTOR_THRESHOLD 8
@@ -65,6 +65,7 @@ uint32_t GetVictimInSet (uint32_t cpu, uint32_t set, const BLOCK *current_set, u
     for(unsigned int i =0; i < LLC_WAYS; i++)
         if(prediction[set][i]){
             r = i; 
+            //fprintf(stderr,"A dead block is used to replace LRU\n");
             break;
         }
 
@@ -164,8 +165,6 @@ bool predictor::get_prediction(uint32_t CPU,uint32_t trace){
     for(int i=0;i<PREDICTOR_NUM_TABLES;i++)
         sum += predictor_tables[i][get_signature(CPU,trace,i)];
     return sum>=PREDICTOR_THRESHOLD;
-
-    return false;
     
 }
 
