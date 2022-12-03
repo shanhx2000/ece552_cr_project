@@ -13,9 +13,10 @@
 
 
 #define PREDICTOR_NUM_TABLES 3
-#define PREDICTOR_TABLE_ENTRIS 4096
+#define PREDICTOR_TABLE_ENTRIES 4096
 #define PREDICTOR_INDEX_BITS 12 //log2(4096) = 12
 #define PREDICTOR_COUNTER_WIDTH 2
+#define PREDICTOR_COUNTER_MAX 4
 #define PREDICTOR_THRESHOLD 8
 
 #define TRACE_BITS 16
@@ -25,7 +26,7 @@
 uint32_t lru[LLC_SETS][LLC_WAYS]; //LRU gives the baseline replacement policies for SDBP
 bool prediction[LLC_SETS][LLC_WAYS];
 sampler *samp;
-int predictor_tables[PREDICTOR_NUM_TABLES][PREDICTOR_TABLE_ENTRIS];
+int predictor_tables[PREDICTOR_NUM_TABLES][PREDICTOR_TABLE_ENTRIES];
 
 // initialize replacement state
 void InitReplacementState()
@@ -88,7 +89,7 @@ void UpdateReplacementState (uint32_t cpu, uint32_t set, uint32_t way, uint64_t 
 
 
     //update the prediction result for this trace for the next round
-    prediction[set][way] = samp->pred->get_prediction(cpu,get_trace(PC),set);
+    prediction[set][way] = samp->pred->get_prediction(cpu,get_trace(PC));
 }
 
 void UpdateLRUState(uint32_t set, uint32_t way)//function to update LRU
@@ -118,7 +119,6 @@ void PrintStats()
 }
 
 //helper functions to sdbp
-
 //extract the lower 16 bits out of PC as hashing number
 uint32_t get_trace(uint64_t PC){
     return PC & ((1<<TRACE_BITS)-1);
@@ -132,12 +132,34 @@ uint32_t predictor::get_signature(uint32_t CPU, uint32_t trace, int table_num){
 
 //update the counter value, increment if dead, decrease the counter if not
 void predictor::block_dead(uint32_t CPU, uint32_t trace, bool ifdead){
-    return;
+    
+    for(int i=0;i<PREDICTOR_NUM_TABLES;i++){
+        
+        uint32_t index = get_signature(CPU,trace,i);
+
+        if(ifdead){
+            if(predictor_tables[i][index]<PREDICTOR_COUNTER_MAX)
+                predictor_tables[i][index]++;
+        }else{
+            //decrease the counter otherwise
+            if(i%2 ==0){
+                predictor_tables[i][index]--;//even number table decrease by one
+            }else{
+                predictor_tables[i][index]>>=1; //odd number table decrease exponentially
+            }
+        }            
+    }
 }
 
 //predict if a given block is considered dead
-bool predictor::get_prediction(uint32_t CPU,uint32_t trace, uint32_t set){
-    return true;
+bool predictor::get_prediction(uint32_t CPU,uint32_t trace){
+    
+    int sum = 0;
+
+    for(int i=0;i<PREDICTOR_NUM_TABLES;i++)
+        sum += predictor_tables[i][get_signature(CPU,trace,i)];
+    return sum>=PREDICTOR_THRESHOLD;
+    
 }
 
 //initialize sampler and its substruct
@@ -148,10 +170,57 @@ sampler::sampler(void){
 
 sampler_set::sampler_set(void){
     entries = new sampler_entry[SAMPLER_ASSOC];
+
+    //init sampler LRU values
+    for(int i=0;i<SAMPLER_ASSOC;i++)
+        entries[i].lru_stack_position = i;
 }
 
 //update sampler
 void sampler::update_sampler(uint32_t CPU, uint32_t set,uint64_t tag, uint64_t PC){
     
-    sampler_entry *entries = &sets[set].entries[0];
+    sampler_entry *entries = &sets[set].entries[0]; // identify the target sampler set
+    uint32_t partial_tag = tag & ((1<<TAG_BITS)-1); //extract the lower 16-bit of the address 
+
+    int i; 
+    for(i=0;i<SAMPLER_ASSOC;i++)
+        if(entries[i].valid && entries[i].tag == partial_tag){
+            pred->block_dead(CPU,entries[i].trace,false);
+            break;
+        }
+    
+    //if we dont find a match
+    if(i == SAMPLER_ASSOC){
+
+        // look for invalid block to replace
+        for(i=0;i<SAMPLER_ASSOC;i++) 
+            if(entries[i].valid == false)
+                break;
+        
+        //no invalid block, look for dead block
+        for(i=0;i<SAMPLER_ASSOC;i++) 
+            if(entries[i].prediction)
+                break;
+        
+        //if both miss, use LRU block
+        if(i==SAMPLER_ASSOC){
+            int j;
+            for (j=0;j<SAMPLER_ASSOC;j++)
+                if(entries[j].lru_stack_position == (unsigned int)(SAMPLER_ASSOC -1))
+                    break;
+            i = j;
+        }
+
+        pred->block_dead(CPU,entries[i].trace,true);
+        entries[i].tag = partial_tag;
+        entries[i].valid = true;
+    }
+
+    entries[i].trace = get_trace(PC);
+    entries[i].prediction = pred->get_prediction(CPU,entries[i].trace);
+
+    //now the replaced entry should be moved to MRU position
+    for(int way=0;way<SAMPLER_ASSOC;way++)
+        entries[way].lru_stack_position++;
+    entries[i].lru_stack_position = 0;
 }

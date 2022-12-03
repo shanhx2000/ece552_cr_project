@@ -38,7 +38,7 @@ struct sampler_entry{
 };
 
 struct predictor{
-    bool predictor::get_prediction(uint32_t CPU,uint32_t trace, uint32_t set);
+    bool predictor::get_prediction(uint32_t CPU,uint32_t trace);
     void predictor::block_dead(uint32_t CPU, uint32_t trace, bool ifdead);
     uint32_t predictor::get_signature(uint32_t CPU, uint32_t trace, int table_num);
 };
