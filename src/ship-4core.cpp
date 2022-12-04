@@ -12,7 +12,7 @@
 #include<assert.h>
 // #include "../MicroBenchmarks/MicroBenchmark.h"
 
-#define NUM_CORE 1
+#define NUM_CORE 4
 #define LLC_SETS NUM_CORE*2048
 #define LLC_WAYS 16
 

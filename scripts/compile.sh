@@ -28,7 +28,7 @@ fi
 # single_core_source_files=($CRC2_dir/example/srrip.cc  $CRC2_dir/example/lru.cc $pj_dir/src/ship.cpp)
 
 single_core_source_files=($CRC2_dir/example/srrip.cc  $CRC2_dir/example/lru.cc $pj_dir/src/ship.cpp $pj_dir/example/ship++.cc)
-single_core_config_files=($CRC2_dir/lib/config1.a)
+single_core_config_files=($CRC2_dir/lib/config2.a)
 
 for cf in ${single_core_config_files[@]};
 do
@@ -51,7 +51,7 @@ done
 # multi_core_config_files=($CRC2_dir/lib/config3.a $CRC2_dir/lib/config4.a)
 # multi_core_source_files=($CRC2_dir/example/lru-8MB.cc)
 multi_core_config_files=($CRC2_dir/lib/config3.a $CRC2_dir/lib/config4.a)
-multi_core_source_files=($CRC2_dir/example/lru-8MB.cc $pj_dir/example/ship++.cc)
+multi_core_source_files=($CRC2_dir/example/lru-8MB.cc $pj_dir/example/ship++.cc $pj_dir/src/ship-4core.cpp)
 
 for cf in ${multi_core_config_files[@]};
 do
