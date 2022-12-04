@@ -198,10 +198,10 @@ void sampler::update_sampler(uint32_t CPU, uint32_t set,uint64_t tag, uint64_t P
     //if we dont find a match
     if(i == SAMPLER_ASSOC){
 
-        // look for invalid block to replace
-        for(i=0;i<SAMPLER_ASSOC;i++) 
-            if(entries[i].valid == false)
-                break;
+        // // look for invalid block to replace
+        // for(i=0;i<SAMPLER_ASSOC;i++) 
+        //     if(entries[i].valid == false)
+        //         break;
         
         //no invalid block, look for dead block
         for(i=0;i<SAMPLER_ASSOC;i++) 
