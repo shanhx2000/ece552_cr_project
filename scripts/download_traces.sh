@@ -19,28 +19,29 @@ dl_trace() {
     xzfilename=${xzfilename::-5}
     name=$((echo $xzfilename) | cut -d'.' -f 1)
     gzfilename=$name.trace.gz
+
     echo $name $xzfilename
 
     cd ../traces_download/xz
     
     tracefilename=$name.trace
-    if [ ! -f $filename ] && [ ! -f $tracefilename ] && [ ! -f $gzfilename ]
+    if [ ! -e $xzfilename ] && [ ! -e $tracefilename ] && [ ! -e $gzfilename ]
     then
         echo "wget"
         wget -q -O $xzfilename $url
     fi
-    if [ ! -f $tracefilename ] && [ ! -f $gzfilename ]
+    if [ ! -e $tracefilename ] && [ ! -e $gzfilename ]
     then
         echo "xz"
         xz -d -v $xzfilename
     fi
     # TODO: Try to reduce the size of instructions
-    if [ ! -f $gzfilename ]
+    if [ ! -e $gzfilename ]
     then
         echo "gz"
         gzip -v $tracefilename
     fi
-    cd ../../$ece552_cr_project
+    cd ../../ece552_cr_project
 }
 
 urls=($(<$pj_dir/scripts/urls_files))
