@@ -1,0 +1,90 @@
+trace bzip2_10M -sdbp
+CPU 0 cummulative IPC: 0.811763 instructions: 200000000 cycles: 246377295
+trace bzip2_10M -ship
+CPU 0 cummulative IPC: 0.813791 instructions: 200000000 cycles: 245763306
+trace bzip2_10M -lru
+CPU 0 cummulative IPC: 0.811763 instructions: 200000000 cycles: 246377295
+trace bzip2_10M -hawkeye
+CPU 0 cummulative IPC: 0.813065 instructions: 200000000 cycles: 245982688
+
+trace calculix_2670B -sdbp
+CPU 0 cummulative IPC: 2.08482 instructions: 200000002 cycles: 95931732
+trace calculix_2670B -ship
+CPU 0 cummulative IPC: 2.08482 instructions: 200000002 cycles: 95931732
+trace calculix_2670B -lru
+CPU 0 cummulative IPC: 2.08482 instructions: 200000002 cycles: 95931732
+trace calculix_2670B -hawkeye
+CPU 0 cummulative IPC: 2.08482 instructions: 200000002 cycles: 95931732
+
+trace gcc_13B -sdbp
+CPU 0 cummulative IPC: 0.224345 instructions: 200000000 cycles: 891483982
+trace gcc_13B -ship
+CPU 0 cummulative IPC: 0.224466 instructions: 200000000 cycles: 891004178
+trace gcc_13B -lru
+CPU 0 cummulative IPC: 0.224398 instructions: 200000000 cycles: 891274488
+trace gcc_13B -hawkeye
+CPU 0 cummulative IPC: 0.228315 instructions: 200000000 cycles: 875980917
+
+trace gobmk_60B -sdbp
+CPU 0 cummulative IPC: 0.444294 instructions: 200000003 cycles: 450152062
+trace gobmk_60B -ship
+CPU 0 cummulative IPC: 0.444287 instructions: 200000003 cycles: 450159254
+trace gobmk_60B -lru
+CPU 0 cummulative IPC: 0.444294 instructions: 200000003 cycles: 450152877
+trace gobmk_60B -hawkeye
+CPU 0 cummulative IPC: 0.444231 instructions: 200000003 cycles: 450215976
+
+trace libquantum_10M -sdbp
+CPU 0 cummulative IPC: 0.466543 instructions: 200000000 cycles: 428684709
+trace libquantum_10M -ship
+CPU 0 cummulative IPC: 0.47704 instructions: 200000000 cycles: 419252412
+trace libquantum_10M -lru
+CPU 0 cummulative IPC: 0.458576 instructions: 200000000 cycles: 436132905
+trace libquantum_10M -hawkeye
+CPU 0 cummulative IPC: 0.489092 instructions: 200000000 cycles: 408920852
+
+trace mcf_46B -sdbp
+CPU 0 cummulative IPC: 0.107699 instructions: 200000001 cycles: 1857034947
+trace mcf_46B -ship
+CPU 0 cummulative IPC: 0.114036 instructions: 200000001 cycles: 1753830061
+trace mcf_46B -lru
+CPU 0 cummulative IPC: 0.113637 instructions: 200000001 cycles: 1759997062
+trace mcf_46B -hawkeye
+CPU 0 cummulative IPC: 0.119552 instructions: 200000001 cycles: 1672907122
+
+trace soplex_66B -sdbp
+CPU 0 cummulative IPC: 0.382195 instructions: 200000000 cycles: 523292847
+trace soplex_66B -ship
+CPU 0 cummulative IPC: 0.398108 instructions: 200000000 cycles: 502376338
+trace soplex_66B -lru
+CPU 0 cummulative IPC: 0.392409 instructions: 200000000 cycles: 509671740
+trace soplex_66B -hawkeye
+CPU 0 cummulative IPC: 0.398924 instructions: 200000000 cycles: 501348943
+
+trace xalancbmk_10M -sdbp
+CPU 0 cummulative IPC: 0.28984 instructions: 200000001 cycles: 690035402
+trace xalancbmk_10M -ship
+CPU 0 cummulative IPC: 0.290113 instructions: 200000001 cycles: 689386592
+trace xalancbmk_10M -lru
+CPU 0 cummulative IPC: 0.289632 instructions: 200000001 cycles: 690530652
+trace xalancbmk_10M -hawkeye
+CPU 0 cummulative IPC: 0.310222 instructions: 200000001 cycles: 644699140
+
+trace zeusmp_300B -sdbp
+CPU 0 cummulative IPC: 1.37322 instructions: 200000002 cycles: 145642997
+trace zeusmp_300B -ship
+CPU 0 cummulative IPC: 1.37369 instructions: 200000002 cycles: 145593695
+trace zeusmp_300B -lru
+CPU 0 cummulative IPC: 1.3757 instructions: 200000002 cycles: 145380904
+trace zeusmp_300B -hawkeye
+CPU 0 cummulative IPC: 1.36425 instructions: 200000002 cycles: 146600749
+
+trace gromacs_0B -sdbp
+CPU 0 cummulative IPC: 0.483918 instructions: 200000001 cycles: 413293493
+trace gromacs_0B -ship
+CPU 0 cummulative IPC: 0.483918 instructions: 200000001 cycles: 413293259
+trace gromacs_0B -lru
+CPU 0 cummulative IPC: 0.483918 instructions: 200000001 cycles: 413293493
+trace gromacs_0B -hawkeye
+CPU 0 cummulative IPC: 0.483916 instructions: 200000001 cycles: 413294900
+

@@ -104,7 +104,7 @@ void UpdateReplacementState (uint32_t cpu, uint32_t set, uint32_t way, uint64_t 
         //compute the actual sampler set index, access the sampler
         int samp_index = set / SAMPLER_MODULUS;
         if (samp_index >=0 && samp_index < SAMPLER_SETS)
-            samp->update_sampler(cpu,set,paddr,PC);
+            samp->update_sampler(cpu,samp_index,paddr,PC);
     }
 
 
@@ -168,7 +168,7 @@ bool predictor::get_prediction(uint32_t CPU,uint32_t trace){
     
 }
 
-//initialize sampler and its substruct
+//initialize sampler and its sub
 sampler::sampler(void){
     pred = new predictor ();
     sets = new sampler_set [SAMPLER_SETS];
@@ -186,7 +186,7 @@ sampler_set::sampler_set(void){
 void sampler::update_sampler(uint32_t CPU, uint32_t set,uint64_t tag, uint64_t PC){
     
     sampler_entry *entries = &sets[set].entries[0]; // identify the target sampler set
-    uint32_t partial_tag = tag & (((1<<TAG_BITS)-1)<<4); //extract the lower 16-bit of the address 
+    uint32_t partial_tag = tag & (((1<<TAG_BITS)-1)); //extract the lower 16-bit of the address 
 
     int i; 
     for(i=0;i<SAMPLER_ASSOC;i++)
