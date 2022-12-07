@@ -58,18 +58,35 @@ public:
             for(int j=0;j<this->llc_sets;++j) {
                 cout << "Set " << j << ": ";
                 for(int k=0;k<this->llc_ways;++k)
-                    cout << "(" << this->table[i][j][k].valid << "," << this->table[i][j][k].full_addr << "," << this->table[i][j][k].data << ") ";
+                    cout << "(" << (this->table[i][j][k].valid ? "v" : "i") << ", addr=" << this->table[i][j][k].full_addr << ", data=" << this->table[i][j][k].data << ") ";
                 cout << endl;
             }
         }
     }
 };
-#define INVALID_ADDRESS 99999999
-int main() {
-    cout << "Please change your config to follow micro_benchmark_parameters. " << endl;
-    vector<Access> accesses;
-    int PC_couter = 0;
 
+#define INVALID_ADDRESS 99999999
+
+// Access(uint64_t _PC, 
+//            uint64_t _address,
+//            uint32_t _type=LOAD,
+//            uint64_t _cpu=0)
+
+void generate_PC_based_accesses(vector<Access> &accesses)
+{
+    // Train PC_based RRIP
+    for (int i = 0;i<5;++i)
+        accesses.push_back(Access(57, 9+4*i)); // 0~4
+    
+    // Expect PC58 rrip is smaller than PC57
+    accesses.push_back(Access(58, 5)); // 5
+    accesses.push_back(Access(57, 1)); // 6
+    accesses.push_back(Access(58, 5)); // 7
+}
+
+void generate_mem_based_accesses(vector<Access> &accesses)
+{
+    int PC_couter = 0;
     // load 3, 6, 9, 12
     // set  3, 2, 1, 0
     // Cache 
@@ -113,6 +130,15 @@ int main() {
             accesses.push_back(Access(PC_couter, (5)*8+0));
         PC_couter += 1;
     }
+}
+
+int main() {
+    cout << "Please change your config to follow micro_benchmark_parameters. " << endl;
+    vector<Access> accesses;
+    int PC_couter = 0;
+
+    generate_PC_based_accesses(accesses);
+    // generate_mem_based_accesses(accesses);
 
     CacheTable table = CacheTable(micro_benchmark_parameters);
 
@@ -133,6 +159,7 @@ int main() {
 
         if ( way < table.llc_ways ) // Hit
         {
+            cout << "Hit!" << endl;
             if(acc.type == WRITEBACK) {
                 table.table[core][set][way].data = new_block.data;
                 table.table[core][set][way].dirty = true;
