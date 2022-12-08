@@ -75,21 +75,11 @@ public:
 void bcmk_for_SDBP(vector<Access> &accesses)
 {
     accesses.push_back(Access(56, 2)); // 0
-    accesses.push_back(Access(57, 2)); // 1
-    accesses.push_back(Access(57, 2)); // 2
-    accesses.push_back(Access(58, 2)); // 3
-    accesses.push_back(Access(58, 2)); // 4 // PT++ PC=56
-    accesses.push_back(Access(56, 2)); // 5
-    accesses.push_back(Access(57, 2)); // 6
-    accesses.push_back(Access(57, 2)); // 7
-    accesses.push_back(Access(58, 2)); // 8
-    accesses.push_back(Access(58, 2)); // 9
-    accesses.push_back(Access(56, 2)); // 10
-    accesses.push_back(Access(57, 2)); // 11
-    accesses.push_back(Access(57, 2)); // 12
-    accesses.push_back(Access(58, 2)); // 13// PT++ PC=56
-    accesses.push_back(Access(58, 2)); // 14
-    accesses.push_back(Access(56, 2)); // 15// PC56 accessed block as replacement block, early evicted.
+    for (int i = 0 ; i < 5 ; ++ i )
+        accesses.push_back(Access(60+i, 16+2+(i+1)*4));
+    accesses.push_back(Access(56, 2));
+    accesses.push_back(Access(57, 6));
+    accesses.push_back(Access(58, 10));
 }
 
 void generate_PC_based_accesses(vector<Access> &accesses)
