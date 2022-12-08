@@ -72,6 +72,26 @@ public:
 //            uint32_t _type=LOAD,
 //            uint64_t _cpu=0)
 
+void bcmk_for_SDBP(vector<Access> &accesses)
+{
+    accesses.push_back(Access(56, 2)); // 0
+    accesses.push_back(Access(57, 2)); // 1
+    accesses.push_back(Access(57, 2)); // 2
+    accesses.push_back(Access(58, 2)); // 3
+    accesses.push_back(Access(58, 2)); // 4 // PT++ PC=56
+    accesses.push_back(Access(56, 2)); // 5
+    accesses.push_back(Access(57, 2)); // 6
+    accesses.push_back(Access(57, 2)); // 7
+    accesses.push_back(Access(58, 2)); // 8
+    accesses.push_back(Access(58, 2)); // 9
+    accesses.push_back(Access(56, 2)); // 10
+    accesses.push_back(Access(57, 2)); // 11
+    accesses.push_back(Access(57, 2)); // 12
+    accesses.push_back(Access(58, 2)); // 13// PT++ PC=56
+    accesses.push_back(Access(58, 2)); // 14
+    accesses.push_back(Access(56, 2)); // 15// PC56 accessed block as replacement block, early evicted.
+}
+
 void generate_PC_based_accesses(vector<Access> &accesses)
 {
     // Train PC_based RRIP
@@ -137,8 +157,9 @@ int main() {
     vector<Access> accesses;
     int PC_couter = 0;
 
-    generate_PC_based_accesses(accesses);
+    // generate_PC_based_accesses(accesses);
     // generate_mem_based_accesses(accesses);
+    bcmk_for_SDBP(accesses);
 
     CacheTable table = CacheTable(micro_benchmark_parameters);
 

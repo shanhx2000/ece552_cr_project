@@ -24,6 +24,8 @@ fi
 
 micbcmk_dir=$pj_dir/MicroBenchmarks
 g++ -Wall --std=c++11 -w $micbcmk_dir/Champsim_crc2.cc $micbcmk_dir/MicroBenchmark.cc $pj_dir/MicBCMK_src/ship.cpp -o MicroBenchmarks_exec/ship
+g++ -Wall --std=c++11 -w $micbcmk_dir/Champsim_crc2.cc $micbcmk_dir/MicroBenchmark.cc $pj_dir/MicBCMK_src/sdbp.cc -o MicroBenchmarks_exec/sdbp
+
 
 # # Single core with 2MB LLC
 # # with(config2)/without(config1)

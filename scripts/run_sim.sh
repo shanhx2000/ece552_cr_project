@@ -7,7 +7,7 @@ result_dir=$pj_dir/"results"/"2e8Tr1e9Te"
 
 # exec_files=$(ls $pj_dir/exec/)
 # exec_files=(lru-config1 ship-config1 ship++-config1 srrip-config1)
-exec_files=(ship-config4)
+exec_files=(ship-config4 ship++-config4 lru-config4)
 # exec_files=(lru-config4)
 
 # TODO: Change it back for the final test.
@@ -25,5 +25,6 @@ do
     elif [[ $cf_name =~ config[34] ]];
     then
         ./$exec_dir/$exec -warmup_instructions $warmup_insn_num -simulation_instructions $simula_insn_num -traces $CRC2_dir/trace/bzip2_10M.trace.gz $CRC2_dir/trace/mcf_10M.trace.gz $CRC2_dir/trace/libquantum_10M.trace.gz $CRC2_dir/trace/xalancbmk_10M.trace.gz > $result_dir/$exec-SPEC2006.out
+        ./$exec_dir/$exec -warmup_instructions $warmup_insn_num -simulation_instructions $simula_insn_num -cloudsuite -traces $CRC2_dir/trace/cassandra_core_0.trace.gz $CRC2_dir/trace/cassandra_core_1.trace.gz $CRC2_dir/trace/cassandra_core_2.trace.gz $CRC2_dir/trace/cassandra_core_3.trace.gz > $result_dir/$exec-cloudsuite.out
     fi
 done
