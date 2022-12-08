@@ -17,7 +17,7 @@ check_directory () {
 
 check_directory $pj_dir
 check_directory $CRC2_dir
-check_directory $ChampSim_dir
+# check_directory $ChampSim_dir # Commented it since we decide not to use the latest version in the end. 
 check_directory $exec_dir
 check_directory $result_dir
 if [ ! -d $traces_download_dir ]
