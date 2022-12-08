@@ -2,22 +2,22 @@
 #include "sdbp.h"
 #include "utils.h"
 
-#define NUM_CORE 1
-#define LLC_SETS NUM_CORE*4
-#define LLC_WAYS 2
+#define NUM_CORE 4
+#define LLC_SETS NUM_CORE*2048
+#define LLC_WAYS 16
 
 //definitions to Sampling Predictor
-#define SAMPLER_SETS 4
-#define SAMPLER_ASSOC 2
+#define SAMPLER_SETS 32*NUM_CORE
+#define SAMPLER_ASSOC 12
 #define SAMPLER_MODULUS LLC_SETS/SAMPLER_SETS
 
 
-#define PREDICTOR_NUM_TABLES 1
-#define PREDICTOR_TABLE_ENTRIES 4096
-#define PREDICTOR_INDEX_BITS 12 //log2(4096) = 12
+#define PREDICTOR_NUM_TABLES 3
+#define PREDICTOR_TABLE_ENTRIES 4096*2
+#define PREDICTOR_INDEX_BITS 13 //log2(4096) = 12
 #define PREDICTOR_COUNTER_WIDTH 2
-#define PREDICTOR_COUNTER_MAX 2
-#define PREDICTOR_THRESHOLD 2
+#define PREDICTOR_COUNTER_MAX 4
+#define PREDICTOR_THRESHOLD 8
 
 #define TRACE_BITS 16
 #define TAG_BITS 16
@@ -65,7 +65,7 @@ uint32_t GetVictimInSet (uint32_t cpu, uint32_t set, const BLOCK *current_set, u
     for(unsigned int i =0; i < LLC_WAYS; i++)
         if(prediction[set][i]){
             r = i; 
-            fprintf(stderr,"A dead block is used to replace LRU\n");
+            //fprintf(stderr,"A dead block is used to replace LRU\n");
             break;
         }
 
@@ -149,11 +149,9 @@ void predictor::block_dead(uint32_t CPU, uint32_t trace, bool ifdead){
         }else{
             //decrease the counter otherwise
             if(i%2 ==0){
-                if(predictor_tables[i][index]>0)
-                    predictor_tables[i][index]--;//even number table decrease by one
+                predictor_tables[i][index]--;//even number table decrease by one
             }else{
-                if(predictor_tables[i][index]>0)
-                    predictor_tables[i][index]>>=1; //odd number table decrease exponentially
+                predictor_tables[i][index]>>=1; //odd number table decrease exponentially
             }
         }            
     }
@@ -170,7 +168,7 @@ bool predictor::get_prediction(uint32_t CPU,uint32_t trace){
     
 }
 
-//initialize sampler and its substruct
+//initialize sampler and its sub
 sampler::sampler(void){
     pred = new predictor ();
     sets = new sampler_set [SAMPLER_SETS];
