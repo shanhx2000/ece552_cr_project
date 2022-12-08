@@ -3,7 +3,7 @@
 ## Directory Tree
 
 This is a project that hopes to verify the result presented in Hawkeye Cache Replacement Policy. 
-The ChampSim environment is needed and should be put parrallel with this directory. The experiments follow the ![CRC2](https://crc2.ece.tamu.edu/). Use `crp` for cache replacement policy, `cf` for configuration, and `bcmk` for benchmark in the followings
+The ChampSim environment is needed and should be put parrallel with this directory. The experiments follow the [CRC2](https://crc2.ece.tamu.edu/). Use `crp` for cache replacement policy, `cf` for configuration, and `bcmk` for benchmark in the followings
 
 ```
 /ChampSim_CRC2
